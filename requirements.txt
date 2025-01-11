@@ -1,0 +1,6 @@
+alembic
+sqlalchemy
+psycopg2
+black
+isort
+flake8

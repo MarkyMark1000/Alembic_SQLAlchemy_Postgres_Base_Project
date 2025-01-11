@@ -1,0 +1,21 @@
+services:
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_PASSWORD: password
+    ports:
+      - 5432:5432
+
+  test_project:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    environment:
+      PGPASSWORD: password
+    volumes:
+      - .:/srv/test_project
