@@ -9,6 +9,70 @@ Currently it contains an explanation of how the current environment was setup.
 Please note that basic code formatting tools such as black, isort and flake8 have been
 provided, but no configuration files have been created.
 
+### Base Project Structure
+
+Add a .gitignore file if required.
+
+Create a requirements.txt file and add the following into the file:
+```
+alembic
+sqlalchemy
+psycopg2
+black
+isort
+flake8
+```
+[Please note that a frozen version has been provided for reference.]
+
+Create a Dockerfile and add the following:
+```
+FROM python:3.12
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    postgresql \
+    postgresql-contrib \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /srv/test_project
+
+ENV PYTHONPATH="${PYTHONPATH}:/srv/test_project"
+
+COPY requirements.txt ./requirements.txt
+RUN python -m pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . /srv/test_project
+
+RUN useradd mark && chown -R mark /srv
+```
+
+Create a docker-compose file and add the following:
+```
+services:
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_PASSWORD: password
+    ports:
+      - 5432:5432
+
+  test_project:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    environment:
+      PGPASSWORD: password
+    volumes:
+      - .:/srv/test_project
+```
+
+### Models/Tables
+
 Create a models directory and add a file called tables.py
 
 Add the following code to the tables.py file:
