@@ -46,7 +46,7 @@ COPY . /srv/test_project
 RUN useradd mark && chown -R mark /srv
 ```
 
-Create a docker-compose file and add the following:
+Create a docker-compose.yml file and add the following:
 ```
 services:
 
